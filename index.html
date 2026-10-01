@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.1 web</title>
+<title>Caja BOKANA - Prototipo v0.4.2 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -67,6 +67,10 @@ th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute
 .banner{background:#fdecc8;color:#5a3a00;padding:8px 14px;font-size:14px}
 dialog{border:1px solid var(--line);border-radius:12px;padding:16px;max-width:420px;width:92%}
 dialog::backdrop{background:#0006}
+
+/* ===== Ticket digital (imagen) ===== */
+#dlgDigital{max-width:460px}
+#digImg{display:block;max-width:100%;max-height:58vh;margin:8px auto;border:1px solid var(--line);background:#fff}
 #printArea{display:none}
 
 /* ===== Ticket 80 mm (formato BOKANA) ===== */
@@ -104,7 +108,7 @@ dialog::backdrop{background:#0006}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.1 web</span>
+  <span class="tag">Prototipo v0.4.2 web</span>
 </header>
 <div class="banner">Prototipo de prueba: los pedidos se guardan e imprimen en esta computadora. Los pedidos se suben a una hoja de PRUEBA de Google Sheets (no a tu hoja real de Pedidos). No usar para pedidos reales todavia.</div>
 
@@ -217,6 +221,18 @@ dialog::backdrop{background:#0006}
   </div>
 </dialog>
 
+
+<dialog id="dlgDigital">
+  <h3 style="margin-top:0">Ticket digital <span id="digFolio"></span></h3>
+  <img id="digImg" alt="Ticket">
+  <p class="note" id="digMsg"></p>
+  <p class="note">Pasos: 1) Pulsa "Copiar y abrir WhatsApp". 2) En el chat del cliente pulsa Ctrl+V. 3) Revisa y envia.</p>
+  <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+    <button class="btn sec" id="digCerrar">Cerrar</button>
+    <button class="btn sec" id="digGuardar">Guardar imagen</button>
+    <button class="btn main" style="width:auto" id="digCopiar">Copiar y abrir WhatsApp</button>
+  </div>
+</dialog>
 <script>
 /* =====================================================================
    CONFIGURACION - EDITAR AQUI (menu, precios, repartidores, envios)
@@ -224,7 +240,7 @@ dialog::backdrop{background:#0006}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.1-web",
+  version: "0.4.2-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -593,6 +609,83 @@ function imprimirTicket(o, esReimp){
   setTimeout(function(){ window.print(); }, 60);
 }
 
+
+/* ========================= TICKET DIGITAL (IMAGEN) ================= */
+var TK_CSS = ".tk{box-sizing:content-box;width:72mm;padding:4mm 4mm 2mm;background:#fff;color:#000;font:12px/1.55 Arial,Helvetica,sans-serif}"+
+".tk .c{text-align:center}.tk .r{text-align:right}.tk .logo{display:block;width:50mm;margin:0 auto 1mm}"+
+".tk .fast{letter-spacing:3px;font-weight:700;font-size:12px}.tk .b{font-weight:700}"+
+".tk .row{display:flex;justify-content:space-between;gap:6px}.tk .item{display:flex;gap:6px;padding:3px 0}"+
+".tk .item .q{width:8mm;flex:none}.tk .item .d{flex:1}.tk .item .m{flex:none;text-align:right}"+
+".tk .sub{font-size:10px;padding-left:8mm;padding-bottom:3px}.tk .tot{font-size:16px;font-weight:700}"+
+".tk .mono{font:700 15px/1.5 'Courier New',Courier,monospace}"+
+".tk .esp{border:3px solid #000;text-align:center;font-size:20px;font-weight:900;letter-spacing:1px;padding:5px 2px;margin:8px 0 4px}"+
+".tk .ley{font-size:11px;font-weight:700;text-align:center;margin-top:4px}"+
+".tk hr{border:none;border-top:1px solid #000;margin:10px 0}";
+(function(){ var st=document.createElement("style"); st.textContent=TK_CSS; document.head.appendChild(st); })();
+
+function ticketPNG(o, cb){
+  var host=document.createElement("div"); host.className="tk";
+  host.style.cssText="position:fixed;left:-9999px;top:0";
+  host.innerHTML=ticketHtml(o,false);
+  document.body.appendChild(host);
+  var logo=host.querySelector("img");
+  var listo = (logo && logo.decode) ? logo.decode().catch(function(){}) : Promise.resolve();
+  listo.then(function(){
+    var w=host.offsetWidth, h=host.offsetHeight;
+    var clone=host.cloneNode(true); clone.style.cssText="";
+    var xml=new XMLSerializer().serializeToString(clone);
+    document.body.removeChild(host);
+    var S=2;
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(w*S)+'" height="'+(h*S)+'" viewBox="0 0 '+w+' '+h+'">'+
+            '<foreignObject x="0" y="0" width="'+w+'" height="'+h+'"><style>'+TK_CSS+'</style>'+xml+'</foreignObject></svg>';
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var cv=document.createElement("canvas"); cv.width=w*S; cv.height=h*S;
+        var cx=cv.getContext("2d"); cx.fillStyle="#fff"; cx.fillRect(0,0,cv.width,cv.height);
+        cx.drawImage(img,0,0,cv.width,cv.height);
+        cv.toBlob(function(b){ b ? cb(b,"") : cb(null,"sin imagen"); },"image/png");
+      }catch(e){ cb(null,String(e)); }
+    };
+    img.onerror=function(){ cb(null,"no se pudo dibujar"); };
+    img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  });
+}
+var digBlob=null, digOrder=null, digUrlObj=null;
+function digWaUrl(o){
+  var d=String(o.tel||"").replace(/\D/g,"");
+  if(d.length>=10) return "https://web.whatsapp.com/send?phone=52"+d.slice(-10);
+  return "https://web.whatsapp.com/";
+}
+function abrirDigital(o){
+  digOrder=o; digBlob=null;
+  $("digFolio").textContent=o.folio; $("digImg").removeAttribute("src");
+  $("digMsg").textContent="Preparando ticket...";
+  if(!$("dlgDigital").open) $("dlgDigital").showModal();
+  ticketPNG(o,function(b,err){
+    if(!b){ $("digMsg").textContent="No se pudo crear la imagen ("+err+"). Usa Reimprimir."; return; }
+    digBlob=b; if(digUrlObj) URL.revokeObjectURL(digUrlObj);
+    digUrlObj=URL.createObjectURL(b); $("digImg").src=digUrlObj;
+    $("digMsg").textContent = String(o.tel||"").replace(/\D/g,"").length>=10 ? "" : "Este pedido no tiene telefono: se abrira WhatsApp Web sin chat.";
+  });
+}
+$("digCerrar").onclick=function(){ $("dlgDigital").close(); };
+$("digGuardar").onclick=function(){
+  if(!digBlob) return;
+  var a=document.createElement("a"); a.href=digUrlObj; a.download="ticket_"+digOrder.folio+".png";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  $("digMsg").textContent="Imagen guardada en la carpeta Descargas.";
+};
+$("digCopiar").onclick=function(){
+  if(!digBlob) return;
+  var url=digWaUrl(digOrder);
+  if(!(navigator.clipboard && window.ClipboardItem)){ $("digMsg").textContent="Esta compu no deja copiar la imagen. Usa Guardar imagen y adjuntala en WhatsApp."; return; }
+  navigator.clipboard.write([new ClipboardItem({"image/png":digBlob})]).then(function(){
+    $("digMsg").textContent="Imagen copiada. En el chat de WhatsApp pulsa Ctrl+V y envia.";
+    window.open(url,"_blank");
+  }).catch(function(){ $("digMsg").textContent="No se pudo copiar. Usa Guardar imagen y adjuntala en WhatsApp."; });
+};
+
 /* ============================= HISTORIAL =========================== */
 function pintaHistorial(){
   var hoy = fechaTxt(new Date());
@@ -619,6 +712,7 @@ function pintaHistorial(){
     var td = tr.lastChild;
     var b1=document.createElement("button"); b1.className="btn sec"; b1.textContent="Reimprimir"; b1.onclick=function(){imprimirTicket(o,true)};
     td.appendChild(b1);
+    if(o.estado!=="cancelado"){ var bd=document.createElement("button"); bd.className="btn sec"; bd.style.marginLeft="4px"; bd.textContent="Ticket digital"; bd.onclick=function(){abrirDigital(o)}; td.appendChild(bd); }
     if(esE && !o.listoTs){ var bl=document.createElement("button"); bl.className="btn sec"; bl.style.marginLeft="4px"; bl.textContent="Listo / entregado"; bl.onclick=function(){ o.listoTs=new Date().toISOString(); guardarDB(); pintaHistorial(); pintaCabecera(); }; td.appendChild(bl); }
     if(o.estado!=="cancelado"){
       if(!o.agg){ var b2=document.createElement("button"); b2.className="btn sec"; b2.style.marginLeft="4px"; b2.textContent="Agregar"; b2.onclick=function(){iniciarAgg(o)}; td.appendChild(b2); }
