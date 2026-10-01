@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.2 web</title>
+<title>Caja BOKANA - Prototipo v0.4.3 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -108,9 +108,8 @@ dialog::backdrop{background:#0006}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.2 web</span>
+  <span class="tag">Prototipo v0.4.3 web</span>
 </header>
-<div class="banner">Prototipo de prueba: los pedidos se guardan e imprimen en esta computadora. Los pedidos se suben a una hoja de PRUEBA de Google Sheets (no a tu hoja real de Pedidos). No usar para pedidos reales todavia.</div>
 
 <div class="tabs">
   <button class="on" data-v="captura">Capturar pedido</button>
@@ -240,7 +239,7 @@ dialog::backdrop{background:#0006}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.2-web",
+  version: "0.4.3-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -250,7 +249,7 @@ var CONFIG = {
   endpoint: "",
   clave: "",
   menu: [
-    {n:"Botana", p:215, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], opciones:["SIN BANDERILLAS X PAPAS"]},
+    {n:"Botana", p:215, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], opciones:["SIN BANDERILLAS X PAPAS"], atajos:[{t:"Botana mixta", split:{CRISPY:1,BUFALO:1}}]},
     {n:"Bokanon", p:250, porc:3, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], atajos:[{t:"Mixto casa", split:{CRISPY:1,BBQ:1,BUFALO:1}}]},
     {n:"Ensalada", p:195, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"]},
     {n:"Ensalada a la plancha", p:210},
