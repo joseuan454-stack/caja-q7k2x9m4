@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.3 web</title>
+<title>Caja BOKANA - Prototipo v0.4.4 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -108,7 +108,7 @@ dialog::backdrop{background:#0006}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.3 web</span>
+  <span class="tag">Prototipo v0.4.4 web</span>
 </header>
 
 <div class="tabs">
@@ -239,7 +239,7 @@ dialog::backdrop{background:#0006}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.3-web",
+  version: "0.4.4-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -559,6 +559,15 @@ function fechaLarga(iso){
   var d=new Date(iso); var h=d.getHours(); var ap=h>=12?"p.m.":"a.m."; h=h%12; if(h===0)h=12;
   return d.getDate()+"/"+(d.getMonth()+1)+"/"+String(d.getFullYear()).slice(2)+", "+h+":"+pad(d.getMinutes(),2)+":"+pad(d.getSeconds(),2)+" "+ap;
 }
+// Como se lee el platillo en el ticket (solo el ticket; los datos y la hoja no cambian).
+// Botana CRISPY/BUFALO -> "BOTANA MIXTA". Bokanon BBQ/CRISPY/BUFALO -> "BOKANON".
+function nombreTicket(l){
+  var n=String(l.n||"").toUpperCase(), s=String(l.sabor||"").toUpperCase();
+  var set=s.split("/").map(function(x){return x.replace(/^\s*\d+\s+/,"").trim()}).filter(Boolean).sort().join("/");
+  if(n==="BOTANA" && set==="BUFALO/CRISPY") return {n:"BOTANA MIXTA", s:""};
+  if(n==="BOKANON" && set==="BBQ/BUFALO/CRISPY") return {n:"BOKANON", s:""};
+  return {n:n, s:s};
+}
 function ticketHtml(o, esReimp){
   var h='';
   h+='<img class="logo" src="'+LOGO+'" alt="BOKANA">';
@@ -574,7 +583,8 @@ function ticketHtml(o, esReimp){
   h+='<hr>';
   h+='<div class="row b"><span>Cant.Descripcion.</span><span>Importe</span></div><hr>';
   o.items.forEach(function(l){
-    h+='<div class="item b"><span class="q">'+l.q+'</span><span class="d">'+esc(String(l.n).toUpperCase())+(l.sabor?' '+esc(String(l.sabor).toUpperCase()):'')+'</span><span class="m">'+m2(l.p*l.q)+'</span></div>';
+    var tk=nombreTicket(l);
+    h+='<div class="item b"><span class="q">'+l.q+'</span><span class="d">'+esc(tk.n)+(tk.s?' '+esc(tk.s):'')+'</span><span class="m">'+m2(l.p*l.q)+'</span></div>';
     if(l.nota) h+='<div class="sub">* '+esc(l.nota)+'</div>';
   });
   if(o.envio) h+='<div class="item b"><span class="q">1</span><span class="d">ENVIO</span><span class="m">'+m2(o.envio)+'</span></div>';
