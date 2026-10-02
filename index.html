@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.5 web</title>
+<title>Caja BOKANA - Prototipo v0.4.6 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -68,6 +68,54 @@ th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute
 dialog{border:1px solid var(--line);border-radius:12px;padding:16px;max-width:420px;width:92%}
 dialog::backdrop{background:#0006}
 
+/* ===== v0.4.6 pantalla: colores por area, tarjetas, resumen, barra fija ===== */
+.c-bot{--cc:#c27c0e;--cb:#fff3d9} .c-ham{--cc:#c0392b;--cb:#fde9e6} .c-ens{--cc:#2e8b46;--cb:#e5f5e8}
+.c-sus{--cc:#2563b0;--cb:#e4eefb} .c-tac{--cc:#7b4b24;--cb:#f2e7db} .c-ext{--cc:#77736a;--cb:#efede7}
+.grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px}
+.prod{min-height:54px;padding:7px 8px;border-left:7px solid var(--cc,var(--line));background:var(--cb,#fff)}
+.prod{min-width:0;overflow:hidden}
+.prod b{font-size:15px;line-height:1.15;overflow-wrap:anywhere}
+.leyenda{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.leyenda span{font-size:12px;font-weight:700;padding:2px 8px 2px 6px;border-radius:6px;background:var(--cb);border-left:5px solid var(--cc)}
+.cart{border:none;min-height:0;display:flex;flex-direction:column;gap:8px}
+.cart .empty{border:1px dashed var(--line);border-radius:10px}
+.line,.line:last-child{border:1px solid var(--line);border-left:8px solid var(--cc,var(--line));border-radius:10px;background:var(--cb,#fff);padding:8px 10px}
+.line.col{padding:6px 10px}
+.line.col .sum{display:block;font-weight:500;font-size:13px;color:var(--muted)}
+.line.col .ok{color:var(--ok);font-weight:800}
+.line.col .pr{font-weight:800;text-align:right}
+.line.col .qty button{width:auto;padding:0 10px}
+#datosPedido .field{margin:6px 0}
+#datosPedido .chip{padding:7px 10px;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:600px){.two{grid-template-columns:1fr}}
+textarea{min-height:44px}
+.barra{position:sticky;bottom:6px;z-index:5;background:var(--panel);border:2px solid var(--ink);border-radius:12px;margin-top:10px;padding:8px 10px;box-shadow:0 -4px 12px #0003}
+.barra .fila{display:flex;gap:10px;align-items:center}
+.barra .total{margin:0;font-size:24px;flex-direction:column;line-height:1.05;gap:0;flex:none}
+.barra .total span:first-child{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.barra #msgCaptura .msg{margin:0 0 6px;padding:6px 10px}
+#resumen{position:sticky;top:8px;border:2px solid var(--ink);border-radius:12px;background:#fff;margin-top:14px;overflow:hidden}
+#resumen .rh{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--ink);color:#fff;padding:6px 10px}
+#resumen .rh b{font-size:13px;letter-spacing:.08em}
+#resumen .rh button{border:1px solid #fff8;background:#ffffff1f;color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;font-size:14px}
+#resumen .rb{padding:10px 12px;max-height:60vh;overflow:auto}
+#resumen .rtipo{font-size:22px;font-weight:900;color:#fff;border-radius:8px;padding:6px 10px;line-height:1.15;word-break:break-word}
+#resumen .rtipo.dom{background:#0d5c63} #resumen .rtipo.cli{background:var(--ink)} #resumen .rtipo.agg{background:var(--warn)}
+#resumen .rtipo small{display:block;font-size:14px;font-weight:700;opacity:.9}
+#resumen .rinfo{font-size:17px;font-weight:700;margin:6px 0 2px}
+#resumen .rit{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;border-left:8px solid var(--cc,var(--line));background:var(--cb,#fff);border-radius:8px;padding:6px 10px;margin-top:8px}
+#resumen .rq{font-size:22px;font-weight:900}
+#resumen .rn{font-size:20px;font-weight:800;line-height:1.15}
+#resumen .rp{font-weight:800;font-size:16px}
+#resumen .rs{grid-column:2/-1;font-size:17px;font-weight:700}
+#resumen .rr{grid-column:2/-1;font-size:17px;font-weight:900;color:var(--bad);text-transform:uppercase}
+#resumen .rw{grid-column:2/-1;font-size:14px;font-weight:800;color:var(--warn)}
+#resumen .rnota{margin-top:8px;border:2px solid var(--bad);color:var(--bad);border-radius:8px;padding:6px 10px;font-size:17px;font-weight:900;text-transform:uppercase}
+#resumen .rtot{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);margin-top:10px;padding-top:6px;font-size:26px;font-weight:900}
+#resumen .renv{display:flex;justify-content:space-between;font-size:16px;font-weight:700;margin-top:8px}
+#resumen .rvacio{color:var(--muted);text-align:center;padding:14px 4px}
+
 /* ===== Ticket digital (imagen) ===== */
 #dlgDigital{max-width:460px}
 #digImg{display:block;max-width:100%;max-height:58vh;margin:8px auto;border:1px solid var(--line);background:#fff}
@@ -108,7 +156,7 @@ dialog::backdrop{background:#0006}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.5 web</span>
+  <span class="tag">Prototipo v0.4.6 web</span>
 </header>
 
 <div class="tabs">
@@ -123,16 +171,21 @@ dialog::backdrop{background:#0006}
   <div class="cols">
     <div>
       <h2>Platillos</h2>
+      <div class="leyenda"><span class="c-bot">Botanas</span><span class="c-ham">Hamburguesas</span><span class="c-ens">Ensaladas</span><span class="c-sus">Sushi</span><span class="c-tac">Tacos / burritos</span><span class="c-ext">Extras</span></div>
       <div class="grid" id="menu"></div>
       <h2 style="margin-top:14px">Extras y complementos</h2>
       <div class="grid" id="menuExtras"></div>
-      <div class="field" style="margin-top:14px">
+      <div class="field" style="margin-top:10px">
         <label>Otro platillo (nombre y precio)</label>
         <div style="display:grid;grid-template-columns:1fr 110px auto;gap:6px">
           <input type="text" id="otroN" placeholder="Nombre">
           <input type="number" id="otroP" placeholder="$" inputmode="numeric">
           <button class="btn sec" id="otroAdd">Agregar</button>
         </div>
+      </div>
+      <div id="resumen">
+        <div class="rh"><b>RESUMEN DEL PEDIDO</b><button type="button" id="btnCopiar">Copiar resumen</button></div>
+        <div class="rb" id="resumenCuerpo"></div>
       </div>
     </div>
 
@@ -146,22 +199,29 @@ dialog::backdrop{background:#0006}
           <div class="chips" id="chTipo"></div></div>
         <div id="domBox">
           <div class="field"><label>Repartidor (opcional: se asigna despues)</label><div class="chips" id="chRep"></div></div>
-          <div class="field"><label>Envio</label><div class="chips" id="chEnv"></div>
-            <input type="number" id="envLibre" placeholder="Otro monto de envio" inputmode="numeric" style="margin-top:6px"></div>
-          <div class="field"><label>Colonia o empresa</label><input type="text" id="domicilio" autocomplete="off" placeholder="Ej. Obrera, Trinity, ICC"></div>
+          <div class="field"><label>Envio</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><div class="chips" id="chEnv"></div>
+            <input type="number" id="envLibre" placeholder="Otro $" inputmode="numeric" style="width:100px"></div></div>
         </div>
-        <div class="field" id="cliBox"><label>Nombre del cliente</label><input type="text" id="cliente" autocomplete="off"></div>
-        <div class="field"><label>Telefono (para pedir la ubicacion por WhatsApp)</label><input type="tel" id="telefono" inputmode="numeric" autocomplete="off"></div>
+        <div class="two">
+          <div class="field" id="colBox"><label>Colonia o empresa</label><input type="text" id="domicilio" name="bk_colonia" autocomplete="off" placeholder="Ej. Obrera, Trinity, ICC"></div>
+          <div class="field" id="cliBox"><label>Nombre del cliente</label><input type="text" id="cliente" name="bk_cliente" autocomplete="off"></div>
+          <div class="field"><label>Telefono (WhatsApp)</label><input type="text" id="telefono" name="bk_telefono" inputmode="numeric" autocomplete="off" data-lpignore="true" data-1p-ignore="true"></div>
+        </div>
         <div class="field"><label>Forma de pago (opcional: se define al entregar)</label><div class="chips" id="chPago"></div></div>
         <div class="field"><label>Notas del pedido</label><textarea id="notas" placeholder="Ej. sin aros por papas"></textarea></div>
       </div>
 
-      <div class="total"><span>TOTAL</span><span id="total">$0</span></div>
-      <div id="msgCaptura"></div>
-      <button class="btn main" id="btnGuardar">GUARDAR E IMPRIMIR</button>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn sec" id="btnLimpiar">Limpiar pedido</button>
-        <button class="btn sec" id="btnCancelAgg" style="display:none">Salir de "Agregar"</button>
+      <div class="barra">
+        <div id="msgCaptura"></div>
+        <div class="fila">
+          <div class="total"><span>TOTAL</span><span id="total">$0</span></div>
+          <button class="btn main" id="btnGuardar" style="flex:1">GUARDAR E IMPRIMIR</button>
+        </div>
+        <div style="margin-top:6px;display:flex;gap:8px">
+          <button class="btn sec" id="btnLimpiar">Limpiar pedido</button>
+          <button class="btn sec" id="btnCancelAgg" style="display:none">Salir de "Agregar"</button>
+        </div>
       </div>
     </div>
   </div>
@@ -188,9 +248,9 @@ dialog::backdrop{background:#0006}
 
   <h2 style="margin-top:18px">Conexion con Google Sheets</h2>
   <div class="field" style="max-width:640px"><label>Direccion del receptor (la da Jose Juan / Claude)</label>
-    <input type="text" id="inEndpoint" placeholder="https://script.google.com/macros/s/.../exec"></div>
+    <input type="text" id="inEndpoint" name="bk_receptor" autocomplete="off" data-lpignore="true" data-1p-ignore="true" placeholder="https://script.google.com/macros/s/.../exec"></div>
   <div class="field" style="max-width:640px;margin-top:8px"><label>Clave de conexion (la da Jose Juan / Claude)</label>
-    <input type="password" id="inClave" placeholder="bk-..." autocomplete="off"></div>
+    <input type="text" id="inClave" name="bk_clave_conexion" autocomplete="off" data-lpignore="true" data-1p-ignore="true" style="-webkit-text-security:disc" placeholder="bk-..."></div>
   <button class="btn sec" id="btnEndpoint">Guardar direccion y probar</button>
   <p class="note" id="estSubida"></p>
 
@@ -239,7 +299,7 @@ dialog::backdrop{background:#0006}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.5-web",
+  version: "0.4.6-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -328,13 +388,31 @@ function pintaSel(){
   chips("chEnv", CONFIG.envios, sel.env, function(v){sel.env=v; $("envLibre").value=""; pintaSel(); pintaTotal();}, function(v){return "$"+v});
   chips("chPago", CONFIG.pagos, sel.pago, function(v){sel.pago=(sel.pago===v?"":v); pintaSel();});
   $("domBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
+  $("colBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
   $("cliBox").style.display = sel.tipo==="Domicilio" ? "none":"block";
+  pintaResumen();
+}
+/* categoria (color) segun el area de cocina */
+function catDe(n){
+  n=String(n||"").toLowerCase();
+  if(/hamb/.test(n)) return "ham";
+  if(/ensalada/.test(n)) return "ens";
+  if(/sushi/.test(n)) return "sus";
+  if(/taco|burrito|gringa|campechana/.test(n)) return "tac";
+  if(/botana|bokanon|boneless|empanada/.test(n)) return "bot";
+  return "ext";
+}
+function cartPush(l, cat){
+  l.cat = cat || catDe(l.n);
+  cart.forEach(function(x){ x.col=true; });   // los anteriores se encogen
+  l.col = false;
+  cart.push(l);
 }
 function pintaMenu(){
   function grupo(idBox, lista){
     var m=$(idBox); m.innerHTML="";
     lista.forEach(function(it){
-      var b=document.createElement("button"); b.type="button"; b.className="prod";
+      var b=document.createElement("button"); b.type="button"; b.className="prod c-"+(idBox==="menuExtras"?"ext":catDe(it.n));
       b.innerHTML="<b>"+esc(it.n)+"</b><span>"+money(it.p)+(it.porc?" - "+it.porc+" "+(it.unidad||"porciones"):"")+(it.elegir?" - elige":"")+"</span>";
       b.onclick=function(){ agregar(it); };
       m.appendChild(b);
@@ -343,22 +421,23 @@ function pintaMenu(){
   grupo("menu", CONFIG.menu); grupo("menuExtras", CONFIG.extras);
 }
 function agregar(it){
+  var cat = (CONFIG.extras.indexOf(it)>=0) ? "ext" : catDe(it.n);
   if(it.elegir){
-    cart.push({n:it.n,p:it.p,q:1,elegir:it.elegir,eleg:"",nota:""});
+    cartPush({n:it.n,p:it.p,q:1,elegir:it.elegir,eleg:"",nota:""},cat);
     pintaCart(); return;
   }
   if(it.opciones && !it.porc){
-    cart.push({n:it.n,p:it.p,q:1,solo:true,opciones:it.opciones,opc:{},nota:""});
+    cartPush({n:it.n,p:it.p,q:1,solo:true,opciones:it.opciones,opc:{},nota:""},cat);
     pintaCart(); return;
   }
   if(it.porc){
-    cart.push({n:it.n,p:it.p,q:1,porc:it.porc,unidad:it.unidad||"porciones",conteo:!!it.conteo,sabs:it.sabores,split:{},opciones:it.opciones||[],opc:{},atajos:it.atajos||[],nota:""});
+    cartPush({n:it.n,p:it.p,q:1,porc:it.porc,unidad:it.unidad||"porciones",conteo:!!it.conteo,sabs:it.sabores,split:{},opciones:it.opciones||[],opc:{},atajos:it.atajos||[],nota:""},cat);
     pintaCart(); return;
   }
   for(var i=0;i<cart.length;i++){
     if(!cart[i].porc && !cart[i].elegir && !cart[i].solo && cart[i].n===it.n && !cart[i].nota && cart[i].p===it.p){ cart[i].q++; pintaCart(); return; }
   }
-  cart.push({n:it.n,p:it.p,q:1,nota:""});
+  cartPush({n:it.n,p:it.p,q:1,nota:""},cat);
   pintaCart();
 }
 function totalSplit(l){ var t=0; for(var k in l.split) t+=l.split[k]; return t; }
@@ -370,12 +449,110 @@ function descSabor(l){
   var iguales = !l.conteo && ks.every(function(k){return l.split[k]===l.split[ks[0]]});
   return ks.map(function(k){ return iguales ? k : l.split[k]+" "+k; }).join("/");
 }
+/* ---- detalle de una linea (se usa en tarjeta encogida y en el resumen) ---- */
+function lineaCompleta(l){
+  if(l.elegir) return !!l.eleg;
+  if(l.porc) return totalSplit(l)===l.porc;
+  return true;
+}
+function detalleLinea(l){
+  var sabor = l.elegir ? (l.eleg||"") : descSabor(l);
+  var opc = (l.porc||l.solo) ? (l.opciones||[]).filter(function(o){return l.opc&&l.opc[o]}) : [];
+  var rojas = opc.concat(l.nota? [l.nota]:[]);
+  return {sabor:sabor, rojas:rojas};
+}
+function lineaColapsada(l,i){
+  var dt=detalleLinea(l);
+  var d=document.createElement("div"); d.className="line col c-"+(l.cat||"ext");
+  var det=[]; if(dt.sabor) det.push(dt.sabor); dt.rojas.forEach(function(x){det.push(x)});
+  d.innerHTML='<div class="n"><span class="ok">&#10003;</span> '+esc(l.n)+' <span class="sum">'+esc(det.join(" - ")||"completo")+'</span></div>'+
+    '<div class="pr">'+money(l.p*l.q)+'</div>'+
+    '<div class="qty"><button type="button" data-a="ed">Editar</button><button type="button" data-a="del" title="Quitar">x</button></div>';
+  d.querySelector('[data-a="ed"]').onclick=function(){ cart.forEach(function(x){ x.col=true; }); l.col=false; pintaCart(); };
+  d.querySelector('[data-a="del"]').onclick=function(){ cart.splice(i,1); pintaCart(); };
+  return d;
+}
+
+/* ---- RESUMEN DEL PEDIDO (panel de la izquierda) ---- */
+function textoResumen(){
+  var L=[];
+  var dom = sel.tipo==="Domicilio";
+  if(aggDe) L.push("*AGREGAR AL PEDIDO "+aggDe+"*");
+  else if(dom) L.push("*DOMICILIO - "+($("domicilio").value.trim().toUpperCase()||"(falta colonia)")+"*");
+  else L.push("*CLIENTE - "+($("cliente").value.trim().toUpperCase()||"(falta nombre)")+"*");
+  var tel=$("telefono").value.replace(/\D/g,"");
+  if(!aggDe){ if(tel) L.push("Tel: "+tel); if(dom && sel.rep) L.push("Repartidor: "+sel.rep); }
+  L.push("");
+  cart.forEach(function(l){
+    var dt=detalleLinea(l);
+    var t=l.q+"x "+l.n+(dt.sabor?" ("+dt.sabor+")":"");
+    L.push(t);
+    dt.rojas.forEach(function(x){ L.push("   !! "+x.toUpperCase()); });
+  });
+  var nt=$("notas").value.trim();
+  if(nt){ L.push(""); L.push("NOTA: "+nt.toUpperCase()); }
+  var env=envioActual();
+  if(env) L.push("Envio: "+money(env));
+  L.push("TOTAL: "+money(subtotal()+env));
+  return L.join("\n");
+}
+function pintaResumen(){
+  var b=$("resumenCuerpo"); if(!b) return;
+  var dom = sel.tipo==="Domicilio", h="";
+  if(aggDe){
+    h+='<div class="rtipo agg"><small>AGREGAR AL PEDIDO</small>'+esc(aggDe)+'</div>';
+  } else if(dom){
+    var c=$("domicilio").value.trim();
+    h+='<div class="rtipo dom"><small>DOMICILIO</small>'+(c?esc(c.toUpperCase()):'<span style="opacity:.7">falta colonia o empresa</span>')+'</div>';
+  } else {
+    var n=$("cliente").value.trim();
+    h+='<div class="rtipo cli"><small>CLIENTE PASA A RECOGER</small>'+(n?esc(n.toUpperCase()):'<span style="opacity:.7">falta el nombre</span>')+'</div>';
+  }
+  if(!aggDe){
+    var tel=$("telefono").value.replace(/\D/g,""), inf=[];
+    if(tel) inf.push("Tel: "+esc(tel));
+    if(dom && sel.rep) inf.push("Repartidor: "+esc(sel.rep));
+    if(sel.pago) inf.push("Pago: "+esc(sel.pago));
+    if(inf.length) h+='<div class="rinfo">'+inf.join(" &nbsp;&middot;&nbsp; ")+'</div>';
+  }
+  if(!cart.length){
+    h+='<div class="rvacio">Aun no hay platillos. Toca uno del menu.</div>';
+  } else {
+    cart.forEach(function(l){
+      var dt=detalleLinea(l), ok=lineaCompleta(l);
+      h+='<div class="rit c-'+(l.cat||"ext")+'"><span class="rq">'+l.q+'&times;</span><span class="rn">'+esc(l.n)+'</span><span class="rp">'+money(l.p*l.q)+'</span>';
+      if(dt.sabor) h+='<span class="rs">'+esc(dt.sabor)+'</span>';
+      if(!ok) h+='<span class="rw">&#9888; '+(l.elegir?'falta elegir la opcion':'faltan sabores ('+totalSplit(l)+' de '+l.porc+')')+'</span>';
+      dt.rojas.forEach(function(x){ h+='<span class="rr">'+esc(x)+'</span>'; });
+      h+='</div>';
+    });
+  }
+  var nt=$("notas").value.trim();
+  if(nt) h+='<div class="rnota">Nota: '+esc(nt)+'</div>';
+  var env=envioActual();
+  if(env) h+='<div class="renv"><span>Envio</span><span>'+money(env)+'</span></div>';
+  h+='<div class="rtot"><span>TOTAL</span><span>'+money(subtotal()+env)+'</span></div>';
+  b.innerHTML=h;
+}
+function copiarResumen(){
+  var t=textoResumen(), btn=$("btnCopiar");
+  function ok(){ var o=btn.textContent; btn.textContent="Copiado"; setTimeout(function(){btn.textContent="Copiar resumen"},1500); }
+  function viejo(){
+    var ta=document.createElement("textarea"); ta.value=t; ta.style.cssText="position:fixed;left:-999px;top:0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); ok(); }catch(e){ msg("No se pudo copiar el resumen.","err"); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok, viejo); } else viejo();
+}
+
 function pintaCart(){
   var c=$("cart");
   if(!cart.length){ c.innerHTML='<div class="empty">Toca un platillo para agregarlo</div>'; pintaTotal(); return; }
   c.innerHTML="";
   cart.forEach(function(l,i){
-    var d=document.createElement("div"); d.className="line";
+    if(l.col && (l.elegir||l.solo||l.porc) && lineaCompleta(l)){ c.appendChild(lineaColapsada(l,i)); return; }
+    var d=document.createElement("div"); d.className="line c-"+(l.cat||"ext");
     if(l.elegir){
       var okE = !!l.eleg;
       d.innerHTML =
@@ -459,7 +636,7 @@ function envioActual(){
   return isNaN(lib) ? sel.env : lib;
 }
 function subtotal(){ return cart.reduce(function(a,l){return a+l.p*l.q},0); }
-function pintaTotal(){ $("total").textContent = money(subtotal()+envioActual()); }
+function pintaTotal(){ $("total").textContent = money(subtotal()+envioActual()); pintaResumen(); }
 
 function hayEsp(o){ return o.estado!=="cancelado" && o.items.some(function(l){ return l.esp || CONFIG.especiales.indexOf(l.n)>=0; }); }
 function minEsp(o){ var fin = o.listoTs ? new Date(o.listoTs) : new Date(); return Math.max(0, Math.floor((fin - new Date(o.ts))/60000)); }
@@ -801,13 +978,16 @@ function irVista(v){
 }
 document.querySelectorAll(".tabs button").forEach(function(b){ b.onclick=function(){irVista(b.dataset.v)} });
 $("btnGuardar").onclick = guardarEImprimir;
+$("btnCopiar").onclick = copiarResumen;
+document.addEventListener("input", function(){ pintaResumen(); });
+document.addEventListener("change", function(){ pintaResumen(); });
 $("btnLimpiar").onclick = function(){ limpiarFormulario(); msg(""); };
 $("btnCancelAgg").onclick = function(){ limpiarFormulario(); };
 $("envLibre").oninput = function(){ if($("envLibre").value){ sel.env=0; pintaSel(); } pintaTotal(); };
 $("otroAdd").onclick = function(){
   var n=$("otroN").value.trim(), p=parseFloat($("otroP").value);
   if(!n||isNaN(p)||p<0){ msg("Escribe nombre y precio del otro platillo.","err"); return; }
-  cart.push({n:n,p:p,nota:"",q:1}); $("otroN").value=""; $("otroP").value=""; msg(""); pintaCart();
+  cartPush({n:n,p:p,nota:"",q:1},"ext"); $("otroN").value=""; $("otroP").value=""; msg(""); pintaCart();
 };
 $("btnCsv").onclick = descargarCsv;
 $("btnReset").onclick = function(){
