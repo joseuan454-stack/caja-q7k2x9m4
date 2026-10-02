@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.4 web</title>
+<title>Caja BOKANA - Prototipo v0.4.5 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -108,7 +108,7 @@ dialog::backdrop{background:#0006}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.4 web</span>
+  <span class="tag">Prototipo v0.4.5 web</span>
 </header>
 
 <div class="tabs">
@@ -148,10 +148,10 @@ dialog::backdrop{background:#0006}
           <div class="field"><label>Repartidor (opcional: se asigna despues)</label><div class="chips" id="chRep"></div></div>
           <div class="field"><label>Envio</label><div class="chips" id="chEnv"></div>
             <input type="number" id="envLibre" placeholder="Otro monto de envio" inputmode="numeric" style="margin-top:6px"></div>
-          <div class="field"><label>Domicilio</label><input type="text" id="domicilio"></div>
+          <div class="field"><label>Colonia o empresa</label><input type="text" id="domicilio" autocomplete="off" placeholder="Ej. Obrera, Trinity, ICC"></div>
         </div>
-        <div class="field"><label>Cliente</label><input type="text" id="cliente" autocomplete="off"></div>
-        <div class="field"><label>Telefono</label><input type="tel" id="telefono" inputmode="numeric" autocomplete="off"></div>
+        <div class="field" id="cliBox"><label>Nombre del cliente</label><input type="text" id="cliente" autocomplete="off"></div>
+        <div class="field"><label>Telefono (para pedir la ubicacion por WhatsApp)</label><input type="tel" id="telefono" inputmode="numeric" autocomplete="off"></div>
         <div class="field"><label>Forma de pago (opcional: se define al entregar)</label><div class="chips" id="chPago"></div></div>
         <div class="field"><label>Notas del pedido</label><textarea id="notas" placeholder="Ej. sin aros por papas"></textarea></div>
       </div>
@@ -239,7 +239,7 @@ dialog::backdrop{background:#0006}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.4-web",
+  version: "0.4.5-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -323,11 +323,12 @@ function chips(idBox, lista, actual, onPick, fmt){
   });
 }
 function pintaSel(){
-  chips("chTipo", CONFIG.tipos, sel.tipo, function(v){sel.tipo=v; if(v!=="Domicilio"){sel.env=0;} pintaSel(); pintaTotal();});
+  chips("chTipo", CONFIG.tipos, sel.tipo, function(v){sel.tipo=v; if(v!=="Domicilio"){sel.env=0;} pintaSel(); pintaTotal();}, function(v){return v==="Domicilio" ? "DOMICILIO" : "CLIENTE (pasa a recoger)"});
   chips("chRep", CONFIG.repartidores, sel.rep, function(v){sel.rep=(sel.rep===v?"":v); pintaSel();});
   chips("chEnv", CONFIG.envios, sel.env, function(v){sel.env=v; $("envLibre").value=""; pintaSel(); pintaTotal();}, function(v){return "$"+v});
   chips("chPago", CONFIG.pagos, sel.pago, function(v){sel.pago=(sel.pago===v?"":v); pintaSel();});
   $("domBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
+  $("cliBox").style.display = sel.tipo==="Domicilio" ? "none":"block";
 }
 function pintaMenu(){
   function grupo(idBox, lista){
@@ -486,8 +487,10 @@ function guardarEImprimir(){
   if(!storageOk){ msg("Este navegador no permite guardar. NO capturar aqui. Avisar a Jose Juan.","err"); return; }
   if(!DB.pc){ msg("Primero elige la letra de esta PC en Ajustes.","err"); return; }
   if(!cart.length){ msg("Agrega al menos un platillo.","err"); return; }
-  if(!aggDe && sel.tipo==="Domicilio" && !$("telefono").value.trim() && !$("cliente").value.trim()){
-    msg("Para domicilio escribe al menos nombre o telefono.","err"); return; }
+  if(!aggDe && sel.tipo==="Domicilio" && !$("domicilio").value.trim()){
+    msg("Para domicilio escribe la colonia o empresa.","err"); return; }
+  if(!aggDe && sel.tipo!=="Domicilio" && !$("cliente").value.trim()){
+    msg("Escribe el nombre del cliente que pasa a recoger.","err"); return; }
 
   for(var vi=0; vi<cart.length; vi++){
     var lv=cart[vi];
@@ -523,7 +526,7 @@ function guardarEImprimir(){
     pc: pc, items: items, nota: $("notas").value.trim(),
     tipo: aggDe ? "AGG" : sel.tipo, rep: sel.tipo==="Domicilio" ? sel.rep : "",
     envio: envioActual(), pago: sel.pago,
-    cliente: $("cliente").value.trim(), tel: tel, domicilio: sel.tipo==="Domicilio" ? $("domicilio").value.trim() : "",
+    cliente: sel.tipo==="Domicilio" ? "" : $("cliente").value.trim(), tel: tel, domicilio: sel.tipo==="Domicilio" ? $("domicilio").value.trim() : "",
     estado: "activo", subido: false, sospechaDup: sosp? sosp.folio : ""
   };
   o.total = subtotal()+o.envio;
@@ -599,7 +602,7 @@ function ticketHtml(o, esReimp){
   var obs = (o.agg? 'AGREGADO AL PEDIDO '+o.agg+'. ' : '') + (o.nota||'');
   h+='<div class="b">OBSERVACIONES: '+esc(obs)+'</div>';
   h+='<hr>';
-  h+='<div class="mono">Cliente: '+esc(String(o.cliente||"").toUpperCase())+'</div>';
+  if(o.cliente) h+='<div class="mono">Cliente: '+esc(String(o.cliente).toUpperCase())+'</div>';
   var t=String(o.tel||""); if(t) h+='<div class="mono">****'+esc(t.slice(-4))+'</div>';
   var hayEsp = o.items.some(function(l){ return l.esp || CONFIG.especiales.indexOf(l.n)>=0; });
   if(hayEsp) h+='<div class="esp">'+esc(CONFIG.textoEspecial)+'</div>';
@@ -716,7 +719,7 @@ function pintaHistorial(){
       tr.className="esp";
     }
     tr.innerHTML =
-      '<td><b>'+esc(o.folio)+'</b></td><td>'+esc(o.hora)+'</td><td>'+esc(o.cliente||"-")+'<div class="note">'+esc(o.tel||"")+'</div></td>'+
+      '<td><b>'+esc(o.folio)+'</b></td><td>'+esc(o.hora)+'</td><td>'+esc(o.cliente||o.domicilio||"-")+'<div class="note">'+esc(o.tel||"")+'</div></td>'+
       '<td>'+esc(o.tipo)+(o.rep?' / '+esc(o.rep):'')+'</td><td>'+esc(o.agg?"":o.pago)+'</td><td>'+money(o.total)+'</td><td>'+est+'</td><td></td>';
     var td = tr.lastChild;
     var b1=document.createElement("button"); b1.className="btn sec"; b1.textContent="Reimprimir"; b1.onclick=function(){imprimirTicket(o,true)};
@@ -732,7 +735,7 @@ function pintaHistorial(){
 }
 function iniciarAgg(o){
   limpiarFormulario(); aggDe=o.folio;
-  $("aggBox").style.display="block"; $("aggBox").innerHTML="Agregando al pedido <b>"+esc(o.folio)+"</b> ("+esc(o.cliente||"sin nombre")+"). Solo se imprime lo que agregues ahora.";
+  $("aggBox").style.display="block"; $("aggBox").innerHTML="Agregando al pedido <b>"+esc(o.folio)+"</b> ("+esc(o.cliente||o.domicilio||"sin nombre")+"). Solo se imprime lo que agregues ahora.";
   $("btnCancelAgg").style.display="inline-block"; $("datosPedido").style.display="none";
   pintaTotal(); irVista("captura");
 }
