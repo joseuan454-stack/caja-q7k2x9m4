@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.6 web</title>
+<title>Caja BOKANA - Prototipo v0.4.7 web</title>
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -71,10 +71,10 @@ dialog::backdrop{background:#0006}
 /* ===== v0.4.6 pantalla: colores por area, tarjetas, resumen, barra fija ===== */
 .c-bot{--cc:#c27c0e;--cb:#fff3d9} .c-ham{--cc:#c0392b;--cb:#fde9e6} .c-ens{--cc:#2e8b46;--cb:#e5f5e8}
 .c-sus{--cc:#2563b0;--cb:#e4eefb} .c-tac{--cc:#7b4b24;--cb:#f2e7db} .c-ext{--cc:#77736a;--cb:#efede7}
-.grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:6px}
 .prod{min-height:54px;padding:7px 8px;border-left:7px solid var(--cc,var(--line));background:var(--cb,#fff)}
 .prod{min-width:0;overflow:hidden}
-.prod b{font-size:15px;line-height:1.15;overflow-wrap:anywhere}
+.prod b{font-size:14.5px;line-height:1.15;overflow-wrap:break-word}
 .leyenda{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
 .leyenda span{font-size:12px;font-weight:700;padding:2px 8px 2px 6px;border-radius:6px;background:var(--cb);border-left:5px solid var(--cc)}
 .cart{border:none;min-height:0;display:flex;flex-direction:column;gap:8px}
@@ -85,7 +85,15 @@ dialog::backdrop{background:#0006}
 .line.col .ok{color:var(--ok);font-weight:800}
 .line.col .pr{font-weight:800;text-align:right}
 .line.col .qty button{width:auto;padding:0 10px}
+.btnlisto{grid-column:1/-1;border:none;border-radius:8px;background:var(--ok);color:#fff;font-weight:800;font-size:16px;padding:10px;margin-top:2px}
+.btnlisto[disabled]{background:#d8d4c9;color:#6b665d;opacity:1;font-weight:600;font-size:14px}
+#resumen .rok{display:inline-block;background:var(--ok);color:#fff;border-radius:50%;width:24px;height:24px;line-height:24px;text-align:center;font-size:15px;font-weight:900;margin-right:8px;vertical-align:middle}
+#resumen .rit.pen{opacity:.55;border-left-style:dashed}
+#resumen .rac{grid-column:2/-1;display:flex;gap:8px;margin-top:2px}
+#resumen .rac button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 12px;font-weight:700;font-size:13px}
 #datosPedido .field{margin:6px 0}
+#hPedido{margin-top:10px}
+#pagoBox{margin-top:6px}
 #datosPedido .chip{padding:7px 10px;font-size:14px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media (max-width:600px){.two{grid-template-columns:1fr}}
@@ -156,7 +164,7 @@ textarea{min-height:44px}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.6 web</span>
+  <span class="tag">Prototipo v0.4.7 web</span>
 </header>
 
 <div class="tabs">
@@ -191,26 +199,27 @@ textarea{min-height:44px}
 
     <div>
       <div id="aggBox" class="msg" style="display:none"></div>
-      <h2>Pedido</h2>
-      <div class="cart" id="cart"></div>
-
       <div id="datosPedido">
         <div class="field"><label>Tipo</label>
           <div class="chips" id="chTipo"></div></div>
-        <div id="domBox">
-          <div class="field"><label>Repartidor (opcional: se asigna despues)</label><div class="chips" id="chRep"></div></div>
-          <div class="field"><label>Envio</label>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><div class="chips" id="chEnv"></div>
-            <input type="number" id="envLibre" placeholder="Otro $" inputmode="numeric" style="width:100px"></div></div>
-        </div>
         <div class="two">
           <div class="field" id="colBox"><label>Colonia o empresa</label><input type="text" id="domicilio" name="bk_colonia" autocomplete="off" placeholder="Ej. Obrera, Trinity, ICC"></div>
           <div class="field" id="cliBox"><label>Nombre del cliente</label><input type="text" id="cliente" name="bk_cliente" autocomplete="off"></div>
           <div class="field"><label>Telefono (WhatsApp)</label><input type="text" id="telefono" name="bk_telefono" inputmode="numeric" autocomplete="off" data-lpignore="true" data-1p-ignore="true"></div>
         </div>
-        <div class="field"><label>Forma de pago (opcional: se define al entregar)</label><div class="chips" id="chPago"></div></div>
         <div class="field"><label>Notas del pedido</label><textarea id="notas" placeholder="Ej. sin aros por papas"></textarea></div>
+        <div id="envBox" class="field"><label>Envio</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><div class="chips" id="chEnv"></div>
+          <input type="number" id="envLibre" placeholder="Otro $" inputmode="numeric" style="width:100px"></div></div>
       </div>
+
+      <div id="pagoBox">
+        <div class="field"><label>Forma de pago (opcional: se define al entregar)</label><div class="chips" id="chPago"></div></div>
+        <div id="repBox" class="field"><label>Repartidor (opcional: se asigna despues)</label><div class="chips" id="chRep"></div></div>
+      </div>
+
+      <h2 id="hPedido" style="display:none">Pedido</h2>
+      <div class="cart" id="cart"></div>
 
       <div class="barra">
         <div id="msgCaptura"></div>
@@ -299,7 +308,7 @@ textarea{min-height:44px}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.6-web",
+  version: "0.4.7-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -310,8 +319,8 @@ var CONFIG = {
   clave: "",
   menu: [
     {n:"Botana", p:215, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], opciones:["SIN BANDERILLAS X PAPAS"], atajos:[{t:"Botana mixta", split:{CRISPY:1,BUFALO:1}}]},
-    {n:"Bokanon", p:250, porc:3, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], atajos:[{t:"Mixto casa", split:{CRISPY:1,BBQ:1,BUFALO:1}}]},
-    {n:"Ensalada", p:195, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"]},
+    {n:"Bokanon", p:250, porc:3, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], atajos:[{t:"Bokanon", split:{CRISPY:1,BBQ:1,BUFALO:1}}]},
+    {n:"Ensalada", p:195, porc:2, sabores:["NATURAL","BBQ","CRISPY","BUFALO"], atajos:[{t:"Ensalada mixta", split:{CRISPY:1,BUFALO:1}}]},
     {n:"Ensalada a la plancha", p:210},
     {n:"Ensalada de arrachera", p:210},
     {n:"Hamburguesa", p:190},
@@ -341,7 +350,7 @@ var CONFIG = {
   ],
   sabores: ["","Crispy","BBQ","Bufalo"],
   tipos: ["Para llevar","Domicilio"],
-  repartidores: ["RODOLFO","ALEXIS REPARTIDOR","JOSE JUAN","ALEXIS","FRANCISCO","SUSANA","OTRO","EXTERNO"],
+  repartidores: ["OTRO"],   // el repartidor se asigna despues en la hoja
   envios: [45,50,55,65,70,75,80,95],
   pagos: ["Efectivo","Terminal azul","Transf. fiscal","TJ JJ","Debito","Credito"]
 };
@@ -387,7 +396,8 @@ function pintaSel(){
   chips("chRep", CONFIG.repartidores, sel.rep, function(v){sel.rep=(sel.rep===v?"":v); pintaSel();});
   chips("chEnv", CONFIG.envios, sel.env, function(v){sel.env=v; $("envLibre").value=""; pintaSel(); pintaTotal();}, function(v){return "$"+v});
   chips("chPago", CONFIG.pagos, sel.pago, function(v){sel.pago=(sel.pago===v?"":v); pintaSel();});
-  $("domBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
+  $("envBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
+  $("repBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
   $("colBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
   $("cliBox").style.display = sel.tipo==="Domicilio" ? "none":"block";
   pintaResumen();
@@ -404,8 +414,7 @@ function catDe(n){
 }
 function cartPush(l, cat){
   l.cat = cat || catDe(l.n);
-  cart.forEach(function(x){ x.col=true; });   // los anteriores se encogen
-  l.col = false;
+  l.listo = false;   // aparece en PEDIDO hasta que lo palomeen
   cart.push(l);
 }
 function pintaMenu(){
@@ -518,12 +527,14 @@ function pintaResumen(){
   if(!cart.length){
     h+='<div class="rvacio">Aun no hay platillos. Toca uno del menu.</div>';
   } else {
-    cart.forEach(function(l){
+    cart.forEach(function(l,i){
       var dt=detalleLinea(l), ok=lineaCompleta(l);
-      h+='<div class="rit c-'+(l.cat||"ext")+'"><span class="rq">'+l.q+'&times;</span><span class="rn">'+esc(l.n)+'</span><span class="rp">'+money(l.p*l.q)+'</span>';
+      h+='<div class="rit c-'+(l.cat||"ext")+(l.listo?'':' pen')+'"><span class="rq">'+l.q+'&times;</span><span class="rn">'+(l.listo?'<span class="rok">&#10003;</span>':'')+esc(l.n)+'</span><span class="rp">'+money(l.p*l.q)+'</span>';
       if(dt.sabor) h+='<span class="rs">'+esc(dt.sabor)+'</span>';
       if(!ok) h+='<span class="rw">&#9888; '+(l.elegir?'falta elegir la opcion':'faltan sabores ('+totalSplit(l)+' de '+l.porc+')')+'</span>';
       dt.rojas.forEach(function(x){ h+='<span class="rr">'+esc(x)+'</span>'; });
+      if(l.listo) h+='<span class="rac"><button type="button" data-ra="ed" data-i="'+i+'">Editar</button><button type="button" data-ra="del" data-i="'+i+'">Quitar</button></span>';
+      else h+='<span class="rw">por confirmar con &#10003; en PEDIDO</span>';
       h+='</div>';
     });
   }
@@ -533,6 +544,13 @@ function pintaResumen(){
   if(env) h+='<div class="renv"><span>Envio</span><span>'+money(env)+'</span></div>';
   h+='<div class="rtot"><span>TOTAL</span><span>'+money(subtotal()+env)+'</span></div>';
   b.innerHTML=h;
+  b.querySelectorAll("button[data-ra]").forEach(function(bt){
+    bt.onclick=function(){
+      var i=parseInt(bt.dataset.i,10);
+      if(bt.dataset.ra==="del"){ cart.splice(i,1); } else { cart[i].listo=false; }
+      pintaCart();
+    };
+  });
 }
 function copiarResumen(){
   var t=textoResumen(), btn=$("btnCopiar");
@@ -548,10 +566,12 @@ function copiarResumen(){
 
 function pintaCart(){
   var c=$("cart");
-  if(!cart.length){ c.innerHTML='<div class="empty">Toca un platillo para agregarlo</div>'; pintaTotal(); return; }
+  var hayPend = cart.some(function(x){return !x.listo});
+  $("hPedido").style.display = hayPend ? "block" : "none";
   c.innerHTML="";
+  if(!hayPend){ pintaTotal(); return; }
   cart.forEach(function(l,i){
-    if(l.col && (l.elegir||l.solo||l.porc) && lineaCompleta(l)){ c.appendChild(lineaColapsada(l,i)); return; }
+    if(l.listo) return;
     var d=document.createElement("div"); d.className="line c-"+(l.cat||"ext");
     if(l.elegir){
       var okE = !!l.eleg;
@@ -625,6 +645,10 @@ function pintaCart(){
       d.querySelector('[data-a="mas"]').onclick=function(){ l.q++; pintaCart(); };
       d.querySelector('[data-a="nota"]').oninput=function(e){ l.nota=e.target.value; };
     }
+    var bl=document.createElement("button"); bl.type="button"; bl.className="btnlisto";
+    if(lineaCompleta(l)){ bl.innerHTML="&#10003; LISTO - pasar al resumen"; bl.onclick=function(){ l.listo=true; pintaCart(); }; }
+    else { bl.disabled=true; bl.textContent = l.elegir ? "Elige la opcion para poder confirmar" : "Completa los sabores para poder confirmar"; }
+    d.appendChild(bl);
     c.appendChild(d);
   });
   pintaTotal();
@@ -728,7 +752,7 @@ function guardarEImprimir(){
 function limpiarFormulario(){
   cart=[]; aggDe=null; sel={tipo:"Para llevar",rep:"",env:0,pago:""};
   ["cliente","telefono","domicilio","notas","envLibre"].forEach(function(i){$(i).value=""});
-  $("aggBox").style.display="none"; $("btnCancelAgg").style.display="none"; $("datosPedido").style.display="block";
+  $("aggBox").style.display="none"; $("btnCancelAgg").style.display="none"; $("datosPedido").style.display="block"; $("pagoBox").style.display="block";
   pintaSel(); pintaCart();
 }
 
@@ -913,7 +937,7 @@ function pintaHistorial(){
 function iniciarAgg(o){
   limpiarFormulario(); aggDe=o.folio;
   $("aggBox").style.display="block"; $("aggBox").innerHTML="Agregando al pedido <b>"+esc(o.folio)+"</b> ("+esc(o.cliente||o.domicilio||"sin nombre")+"). Solo se imprime lo que agregues ahora.";
-  $("btnCancelAgg").style.display="inline-block"; $("datosPedido").style.display="none";
+  $("btnCancelAgg").style.display="inline-block"; $("datosPedido").style.display="none"; $("pagoBox").style.display="none";
   pintaTotal(); irVista("captura");
 }
 var cancelando=null;
