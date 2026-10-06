@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.4.7 web</title>
+<title>Caja BOKANA - Prototipo v0.5.0 web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f3f1ec; --panel:#ffffff; --ink:#1d1b18; --muted:#6b665d; --line:#d9d4c8;
@@ -153,6 +154,115 @@ textarea{min-height:44px}
   #printArea .ley{font-size:11px;font-weight:700;text-align:center;margin-top:4px}
   #printArea hr{border:none;border-top:1px solid #000;margin:10px 0}
 }
+
+/* ===== v0.5.0: pantalla nueva "tablero de mostrador" (solo estilo, la logica no cambia) ===== */
+:root{
+  --bg:#e8ebee; --panel:#ffffff; --ink:#16181a; --muted:#565c63; --line:#c5cbd1;
+  --brand:#000000; --ok:#1c7a3c; --warn:#a85a00; --bad:#b3261e;
+  --chip:#f1f3f5; --chip-on:#000; --chip-on-ink:#fff;
+  --fd:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --fc:"Barlow Semi Condensed","Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --fb:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+html,body{font-family:var(--fb);font-size:17px}
+button,input,textarea,select{font-family:inherit}
+
+/* categorias: color solido de tablero de menu (--ct fondo, --cx letra) */
+.c-bot{--ct:#ee7d12;--cx:#000;--cc:#ee7d12;--cb:#fdebd6}
+.c-ham{--ct:#c62d2d;--cx:#fff;--cc:#c62d2d;--cb:#fbe4e4}
+.c-ens{--ct:#1f7a3b;--cx:#fff;--cc:#1f7a3b;--cb:#e1f3e7}
+.c-sus{--ct:#1f5fae;--cx:#fff;--cc:#1f5fae;--cb:#e2ecf9}
+.c-tac{--ct:#6e4423;--cx:#fff;--cc:#6e4423;--cb:#f0e6dc}
+.c-ext{--ct:#4b5057;--cx:#fff;--cc:#4b5057;--cb:#eceef0}
+
+/* barra superior */
+header.top{background:#000;padding:10px 18px;gap:10px}
+header.top h1{font-family:var(--fd);font-weight:800;font-size:30px;letter-spacing:.14em;line-height:1}
+.tag{background:transparent;border:1px solid #6b7178;color:#fff;border-radius:99px;padding:4px 12px;font-size:14px;font-weight:600}
+.tag.ok{background:var(--ok);border-color:var(--ok)} .tag.warn{background:#ee7d12;border-color:#ee7d12;color:#000} .tag.red{background:var(--bad);border-color:var(--bad)}
+
+/* pestanas */
+.tabs{padding:10px 18px 0;gap:4px}
+.tabs button{font-family:var(--fd);font-size:21px;font-weight:700;border:none;border-bottom:5px solid transparent;background:transparent;border-radius:0;padding:8px 18px 6px;color:var(--muted)}
+.tabs button.on{background:transparent;color:#000;border-bottom-color:#000}
+main{padding:0 18px 18px}
+.view{border:none;border-top:2px solid #000;border-radius:0;background:transparent;padding:14px 0 0}
+.view:not(#v-captura){background:var(--panel);padding:14px;border-radius:10px;border:1px solid var(--line)}
+
+/* titulos de seccion */
+h2{font-family:var(--fd);font-size:24px;font-weight:700;text-transform:none;letter-spacing:.01em;color:#000;margin:0 0 8px}
+
+/* leyenda */
+.leyenda{gap:6px;margin:0 0 10px}
+.leyenda span{background:var(--ct);color:var(--cx);border:none;border-radius:99px;padding:3px 12px;font-size:14px;font-weight:700}
+
+/* platillos: tablero */
+.grid{grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:7px}
+.prod{display:flex;flex-direction:column;justify-content:space-between;gap:6px;min-height:70px;padding:8px 10px;border:none;border-radius:10px;background:var(--ct,#fff);color:var(--cx,#000);box-shadow:0 2px 0 #0003}
+.prod b{font-family:var(--fc);font-size:17.5px;letter-spacing:-.005em;font-weight:700;line-height:1.05;overflow-wrap:break-word;hyphens:none}
+.prod span{font-size:14.5px;font-weight:700;color:inherit;opacity:.95}
+.prod:active{filter:brightness(1.18);transform:translateY(1px);box-shadow:none}
+.prod:focus-visible,.chip:focus-visible,.btn:focus-visible,input:focus-visible,textarea:focus-visible,.tabs button:focus-visible{outline:3px solid #1f5fae;outline-offset:2px}
+
+/* formulario */
+.field label{font-size:15px;font-weight:700;color:#16181a;text-transform:none;letter-spacing:0}
+input[type=text],input[type=tel],input[type=number],textarea,select{min-height:48px;font-size:18px;padding:9px 12px;border:2px solid var(--line);border-radius:8px}
+input:focus,textarea:focus{border-color:#000}
+textarea{min-height:60px}
+.chips{gap:8px}
+.chip{min-height:48px;padding:8px 16px;font-size:17px;font-weight:700;border:2px solid var(--line);background:var(--chip);border-radius:8px}
+.chip.on{background:#000;color:#fff;border-color:#000}
+#datosPedido .chip{padding:8px 16px;font-size:17px}
+#chTipo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#chTipo .chip{min-height:58px;font-family:var(--fd);font-size:23px;font-weight:800;letter-spacing:.02em;text-align:center}
+#datosPedido .field{margin:8px 0}
+
+/* pedido en curso */
+.cart .empty{border:2px dashed var(--line);border-radius:10px;font-size:16px}
+.line,.line:last-child{border:2px solid var(--line);border-left:10px solid var(--cc,var(--line));border-radius:10px}
+.line .n{font-family:var(--fc);font-size:20px;font-weight:700}
+.qty button{width:44px;height:44px;font-size:20px;border:2px solid var(--line)}
+.btnlisto{min-height:48px;font-family:var(--fd);font-size:21px;letter-spacing:.03em}
+
+/* barra de guardar: negra y fija abajo */
+.barra{background:#000;border:none;border-radius:12px;padding:10px 12px;box-shadow:0 -6px 16px #0004;color:#fff}
+.barra .total{color:#fff;font-family:var(--fd);font-size:40px;font-weight:800}
+.barra .total span:first-child{color:#aeb4ba;font-size:14px;letter-spacing:.1em;font-family:var(--fb)}
+.btn{border-radius:10px;font-family:var(--fd);font-size:25px;letter-spacing:.04em}
+.btn.main{background:#ffd21f;color:#000;min-height:64px}
+.btn.main:active{filter:brightness(.92)}
+.barra .btn.sec{background:#23262a;color:#fff;border:1px solid #5b6168;font-family:var(--fb);font-size:15px;min-height:40px}
+.btn.sec{font-family:var(--fb);font-size:16px;font-weight:700}
+.btn.bad{font-family:var(--fb);font-size:16px}
+
+/* resumen */
+#resumen{border:2px solid #000;border-radius:12px}
+#resumen .rh{background:#000}
+#resumen .rh b{font-family:var(--fd);font-size:19px;letter-spacing:.06em;font-weight:700}
+#resumen .rtipo{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:.02em}
+#resumen .rn{font-family:var(--fc);font-size:23px}
+#resumen .rtot{font-family:var(--fd);font-size:34px}
+
+/* tablas */
+th{font-size:14px;text-transform:none;letter-spacing:0;color:#16181a;font-weight:700}
+
+/* ===== dos columnas con scroll propio: la barra de guardar y el resumen siempre a la vista ===== */
+body:has(#v-captura.on){overflow:hidden}
+#v-captura .cols{height:calc(100vh - 150px);min-height:520px;gap:18px;align-items:stretch}
+#v-captura .cols>div{min-height:0}
+.colIzq{display:flex;flex-direction:column;gap:10px}
+.menuScroll{flex:1;min-height:0;overflow:auto;padding:0 4px 8px 0}
+.colIzq #resumen{flex:none;position:static;margin-top:0;max-height:44%;display:flex;flex-direction:column}
+.colIzq #resumen .rb{max-height:none;overflow:auto;flex:1;min-height:0}
+.colDer{display:flex;flex-direction:column;gap:10px}
+.derScroll{flex:1;min-height:0;overflow:auto;padding:0 4px 4px 2px}
+.colDer .barra{position:static;flex:none;margin-top:0}
+.derScroll #cart{margin-bottom:6px}
+#datosPedido .field,#pagoBox .field{margin:6px 0}
+textarea{min-height:52px}
+#chTipo .chip{min-height:52px}
+.chip,input[type=text],input[type=tel],input[type=number]{min-height:44px}
+#envLibre{min-height:44px}
 </style>
 </head>
 <body>
@@ -164,7 +274,7 @@ textarea{min-height:44px}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.4.7 web</span>
+  <span class="tag">Prototipo v0.5.0 web</span>
 </header>
 
 <div class="tabs">
@@ -177,7 +287,8 @@ textarea{min-height:44px}
 <!-- ===================== CAPTURA ===================== -->
 <section class="view on" id="v-captura">
   <div class="cols">
-    <div>
+    <div class="colIzq">
+      <div class="menuScroll">
       <h2>Platillos</h2>
       <div class="leyenda"><span class="c-bot">Botanas</span><span class="c-ham">Hamburguesas</span><span class="c-ens">Ensaladas</span><span class="c-sus">Sushi</span><span class="c-tac">Tacos / burritos</span><span class="c-ext">Extras</span></div>
       <div class="grid" id="menu"></div>
@@ -191,13 +302,15 @@ textarea{min-height:44px}
           <button class="btn sec" id="otroAdd">Agregar</button>
         </div>
       </div>
+      </div>
       <div id="resumen">
         <div class="rh"><b>RESUMEN DEL PEDIDO</b><button type="button" id="btnCopiar">Copiar resumen</button></div>
         <div class="rb" id="resumenCuerpo"></div>
       </div>
     </div>
 
-    <div>
+    <div class="colDer">
+      <div class="derScroll">
       <div id="aggBox" class="msg" style="display:none"></div>
       <div id="datosPedido">
         <div class="field"><label>Tipo</label>
@@ -221,6 +334,7 @@ textarea{min-height:44px}
       <h2 id="hPedido" style="display:none">Pedido</h2>
       <div class="cart" id="cart"></div>
 
+      </div>
       <div class="barra">
         <div id="msgCaptura"></div>
         <div class="fila">
@@ -308,7 +422,7 @@ textarea{min-height:44px}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.4.7-web",
+  version: "0.5.0-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -1051,6 +1165,10 @@ cargar();
 if(!storageOk){ document.body.insertAdjacentHTML("afterbegin",'<div class="banner" style="background:#fbe3e1;color:#b3261e">Este navegador NO permite guardar pedidos. No usar aqui.</div>'); }
 pintaMenu(); pintaSel(); pintaCart(); pintaCabecera(); pintaHistorial();
 if(!DB.pc){ irVista("ajustes"); }
+</script>
+<script>
+(function(){var c=document.getElementById("cart"); if(!c||!window.MutationObserver) return; var n=0;
+ new MutationObserver(function(){var k=c.children.length; if(k>n){ try{c.scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){} } n=k;}).observe(c,{childList:true});})();
 </script>
 </body>
 </html>
