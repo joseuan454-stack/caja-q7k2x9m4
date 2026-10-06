@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.5.0 web</title>
+<title>Caja BOKANA - Prototipo v0.5.1 web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -274,7 +274,7 @@ textarea{min-height:52px}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.5.0 web</span>
+  <span class="tag">Prototipo v0.5.1 web</span>
 </header>
 
 <div class="tabs">
@@ -318,7 +318,7 @@ textarea{min-height:52px}
         <div class="two">
           <div class="field" id="colBox"><label>Colonia o empresa</label><input type="text" id="domicilio" name="bk_colonia" autocomplete="off" placeholder="Ej. Obrera, Trinity, ICC"></div>
           <div class="field" id="cliBox"><label>Nombre del cliente</label><input type="text" id="cliente" name="bk_cliente" autocomplete="off"></div>
-          <div class="field"><label>Telefono (WhatsApp)</label><input type="text" id="telefono" name="bk_telefono" inputmode="numeric" autocomplete="off" data-lpignore="true" data-1p-ignore="true"></div>
+          <div class="field"><label id="lblTel">Telefono (WhatsApp)</label><input type="text" id="telefono" name="bk_telefono" inputmode="numeric" autocomplete="off" data-lpignore="true" data-1p-ignore="true"></div>
         </div>
         <div class="field"><label>Notas del pedido</label><textarea id="notas" placeholder="Ej. sin aros por papas"></textarea></div>
         <div id="envBox" class="field"><label>Envio</label>
@@ -422,7 +422,7 @@ textarea{min-height:52px}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.5.0-web",
+  version: "0.5.1-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -514,6 +514,7 @@ function pintaSel(){
   $("repBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
   $("colBox").style.display = sel.tipo==="Domicilio" ? "block":"none";
   $("cliBox").style.display = sel.tipo==="Domicilio" ? "none":"block";
+  $("lblTel").textContent = (sel.tipo==="Domicilio" && !aggDe) ? "Telefono (WhatsApp) - OBLIGATORIO" : "Telefono (WhatsApp)";
   pintaResumen();
 }
 /* categoria (color) segun el area de cocina */
@@ -804,6 +805,8 @@ function guardarEImprimir(){
   if(!cart.length){ msg("Agrega al menos un platillo.","err"); return; }
   if(!aggDe && sel.tipo==="Domicilio" && !$("domicilio").value.trim()){
     msg("Para domicilio escribe la colonia o empresa.","err"); return; }
+  if(!aggDe && sel.tipo==="Domicilio" && $("telefono").value.replace(/\D/g,"").length<10){
+    msg("Para domicilio el telefono es obligatorio: escribe los 10 numeros.","err"); $("telefono").focus(); return; }
   if(!aggDe && sel.tipo!=="Domicilio" && !$("cliente").value.trim()){
     msg("Escribe el nombre del cliente que pasa a recoger.","err"); return; }
 
