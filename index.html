@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.5.3 web</title>
+<title>Caja BOKANA - Prototipo v0.5.4 web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -296,7 +296,7 @@ textarea{min-height:52px}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.5.3 web</span>
+  <span class="tag">Prototipo v0.5.4 web</span>
 </header>
 
 <div class="tabs">
@@ -444,8 +444,9 @@ textarea{min-height:52px}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
+  holguraPapelMm: 2, // milimetros extra de seguridad en el largo del papel
   margenFinalMm: 3, // espacio en blanco despues de la ultima linea, antes del corte (sube o baja este numero si hace falta)
-  version: "0.5.3-web",
+  version: "0.5.4-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -942,9 +943,34 @@ function ticketHtml(o, esReimp){
   h+='<div class="pie">GRACIAS POR SU PREFERENCIA<br>ESTE NO ES UN COMPROBANTE FISCAL</div>';
   return h;
 }
+// El navegador ignora "alto automatico" y deja el largo de papel que trae la impresora (por eso sobraba papel).
+// Aqui se mide el ticket real y se le pone ese alto exacto a la pagina.
+function ajustarAltoPapel(cb){
+  var listo=false;
+  function fin(){ if(listo) return; listo=true; try{ cb(); }catch(e){} }
+  try{
+    var pa=$("printArea");
+    var m=document.createElement("div"); m.className="tk";
+    m.style.cssText="position:fixed;left:-9999px;top:0;width:72mm;padding:1mm 0 0;box-sizing:content-box";
+    m.innerHTML=pa.innerHTML; document.body.appendChild(m);
+    var logo=m.querySelector("img");
+    var espera=(logo && logo.decode) ? logo.decode().catch(function(){}) : Promise.resolve();
+    setTimeout(fin, 1500);   // por seguridad: si algo tarda, imprime igual
+    espera.then(function(){
+      try{
+        var px=m.getBoundingClientRect().height; document.body.removeChild(m);
+        var mm=Math.ceil(px*25.4/96)+(CONFIG.holguraPapelMm||2);
+        var st=$("estiloAltoPapel");
+        if(!st){ st=document.createElement("style"); st.id="estiloAltoPapel"; document.head.appendChild(st); }
+        st.textContent = (mm>30 && mm<1000) ? "@page{size:80mm "+mm+"mm;margin:0}" : "";
+      }catch(e){}
+      fin();
+    });
+  }catch(e){ fin(); }
+}
 function imprimirTicket(o, esReimp){
   $("printArea").innerHTML = ticketHtml(o, esReimp) + '<div style="height:'+(CONFIG.margenFinalMm||0)+'mm"></div>';
-  setTimeout(function(){ window.print(); }, 60);
+  ajustarAltoPapel(function(){ setTimeout(function(){ window.print(); }, 60); });
 }
 
 
