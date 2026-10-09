@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caja BOKANA - Prototipo v0.5.2 web</title>
+<title>Caja BOKANA - Prototipo v0.5.3 web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -135,7 +135,7 @@ textarea{min-height:44px}
 @media print{
   html,body{background:#fff}
   body>*:not(#printArea){display:none !important}
-  #printArea{display:block !important;width:72mm;margin:0 auto;padding:1mm 0 3mm;color:#000;
+  #printArea{display:block !important;width:72mm;margin:0 auto;padding:1mm 0 0;color:#000;
     font:12px/1.55 Arial,Helvetica,sans-serif}
   #printArea .c{text-align:center}
   #printArea .r{text-align:right}
@@ -296,7 +296,7 @@ textarea{min-height:52px}
   <span class="tag" id="tagPend">Sin subir: 0</span>
   <span class="tag" id="tagEsp" style="display:none"></span>
   <span class="sp"></span>
-  <span class="tag">Prototipo v0.5.2 web</span>
+  <span class="tag">Prototipo v0.5.3 web</span>
 </header>
 
 <div class="tabs">
@@ -444,7 +444,8 @@ textarea{min-height:52px}
    ejemplo y hay que confirmarlos con el negocio.
    ===================================================================== */
 var CONFIG = {
-  version: "0.5.2-web",
+  margenFinalMm: 3, // espacio en blanco despues de la ultima linea, antes del corte (sube o baja este numero si hace falta)
+  version: "0.5.3-web",
   negocio: "BOKANA",
   razon: {nombre:"BOKANA", titular:"CAROLINA MORALES COMPEAN", domicilio:"CEDRO 915 ALAMOS MONCLOVA COAHUILA", rfc:"MOCC770910QH2", tel:"8661010554"},
   leyendaCliente: "",
@@ -938,11 +939,11 @@ function ticketHtml(o, esReimp){
   if(hayEsp) h+='<div class="esp">'+esc(CONFIG.textoEspecial)+'</div>';
   if(CONFIG.leyendaCliente) h+='<div class="ley">'+esc(CONFIG.leyendaCliente)+'</div>';
   if(dom && o.rep) h+='<div class="cli">Repartidor: '+esc(o.rep)+'</div>';
-  h+='<div class="pie">GRACIAS POR SU PREFERENCIA<br>ESTE NO ES UN COMPROBANTE FISCAL</div><br><br>';
+  h+='<div class="pie">GRACIAS POR SU PREFERENCIA<br>ESTE NO ES UN COMPROBANTE FISCAL</div>';
   return h;
 }
 function imprimirTicket(o, esReimp){
-  $("printArea").innerHTML = ticketHtml(o, esReimp);
+  $("printArea").innerHTML = ticketHtml(o, esReimp) + '<div style="height:'+(CONFIG.margenFinalMm||0)+'mm"></div>';
   setTimeout(function(){ window.print(); }, 60);
 }
 
